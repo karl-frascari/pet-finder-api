@@ -1,6 +1,3 @@
-/**
- * Module dependencies.
- */
 var express = require('express');
 var compress = require('compression');
 var session = require('express-session');
@@ -19,43 +16,24 @@ var sass = require('node-sass-middleware');
 var multer = require('multer');
 var upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-/**
- * Load environment variables from .env file, where API keys and passwords are configured.
- *
- * Default path: .env (You can remove the path argument entirely, after renaming `.env.example` to `.env`)
- */
 dotenv.load({ path: '.env' });
 
-/**
- * Controllers (route handlers).
- */
 var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 
-/**
- * API keys and Passport configuration.
- */
 var passportConfig = require('./config/passport');
 
-/**
- * Create Express server.
- */
 var app = express();
 
-/**
- * Connect to MongoDB.
- */
 mongoose.connect(process.env.MONGODB || process.env.MONGOLAB_URI);
+
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
 
-/**
- * Express configuration.
- */
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -65,11 +43,12 @@ app.use(sass({
   dest: path.join(__dirname, 'public'),
   sourceMap: true
 }));
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-console.log(process.env.SESSION_SECRET)
+
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -104,9 +83,6 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
-/**
- * Primary app routes.
- */
 app.get('/', homeController.index);
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
@@ -125,17 +101,11 @@ app.post('/account/password', passportConfig.isAuthenticated, userController.pos
 app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
-/**
- * API examples routes.
- */
 app.get('/api', apiController.getApi);
 app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 app.get('/api/upload', apiController.getFileUpload);
 app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 
-/**
- * OAuth authentication routes. (Sign in)
- */
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function(req, res) {
   res.redirect(req.session.returnTo || '/');
