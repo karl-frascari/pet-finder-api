@@ -19,10 +19,7 @@ passport.deserializeUser(function(id, done) {
 });
 
 
-/**
- * Sign in using Email and Password.
- */
- passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
+passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
   User.findOne({ email: email.toLowerCase() }, function(err, user) {
     if (!user) {
       return done(null, false, { msg: 'Email ' + email + ' not found.' });
@@ -37,10 +34,8 @@ passport.deserializeUser(function(id, done) {
   });
 }));
 
-/**
- * Sign in with Facebook.
- */
- passport.use(new FacebookStrategy({
+
+passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_ID,
   clientSecret: process.env.FACEBOOK_SECRET,
   callbackURL: '/auth/facebook/callback',
@@ -93,14 +88,13 @@ passport.deserializeUser(function(id, done) {
   }
 }));
 
+exports.isAuthenticated = function(req, res, next) {
 
- exports.isAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
   res.redirect('/login');
 };
-
 
 exports.isAuthorized = function(req, res, next) {
   var provider = req.path.split('/').slice(-1)[0];

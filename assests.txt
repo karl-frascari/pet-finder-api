@@ -1,0 +1,46 @@
+Insert pet in DB
+
+{
+    owner: 
+    {
+        id: "7894",
+        name: "Jose",
+        email: "jose@gmail.com"
+    },
+    name: "Miau",
+    type: "Gato",
+    age: 11,
+    dewormed: true,
+    castrated: false,
+    gender: "Male",
+    location:{
+        lat: "-23.3916595",
+        long: "-46.3503655 "
+    },
+    createdAt: ISODate("2014-01-16T00:00:00Z")
+}
+
+
+//postman
+//http://127.0.0.1:3000/newPet
+
+
+{
+    "owner": 
+    {
+        "id": "7894",
+        "name": "Jose",
+        "email": "jose@gmail.com"
+    },
+    "name": "Xoblau",
+    "type": "gato",
+    "age": 11,
+    "dewormed": true,
+    "castrated": false,
+    "gender": "Male",
+    "location":{
+        "lat": "-23.3916595",
+        "long": "-46.3503655 "
+    },
+    "createdAt": "2014-01-16T00:00:00Z"
+}

@@ -61,10 +61,6 @@ exports.logout = function(req, res) {
   res.redirect('/');
 };
 
-/**
- * GET /signup
- * Signup page.
- */
 exports.getSignup = function(req, res) {
   if (req.user) {
     return res.redirect('/');
@@ -74,10 +70,7 @@ exports.getSignup = function(req, res) {
   });
 };
 
-/**
- * POST /signup
- * Create a new local account.
- */
+
 exports.postSignup = function(req, res, next) {
   req.assert('email', 'Email is not valid').isEmail();
   req.assert('password', 'Password must be at least 4 characters long').len(4);

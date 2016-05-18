@@ -16,12 +16,14 @@ var sass = require('node-sass-middleware');
 var multer = require('multer');
 var upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-dotenv.load({ path: '.env' });
-
+//Controllers
 var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
+var petsController = require('./controllers/pets');
+
+dotenv.load({ path: 'var.env' });
 
 var passportConfig = require('./config/passport');
 
@@ -48,7 +50,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-
+console.log(process.env.SESSION_SECRET);
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -58,18 +60,22 @@ app.use(session({
     autoReconnect: true
   })
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
 app.use(function(req, res, next) {
   if (req.path === '/api/upload') {
     next();
   } else {
-    lusca.csrf()(req, res, next);
+    //lusca.csrf()(req, res, next); TODO
+    next();
   }
 });
+
 app.use(lusca.xframe('SAMEORIGIN'));
-app.use(lusca.xssProtection(true));
+app.use(lusca.xssProtection(false));
 app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
@@ -84,17 +90,24 @@ app.use(function(req, res, next) {
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 app.get('/', homeController.index);
+
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
+
 app.get('/logout', userController.logout);
+
 app.get('/forgot', userController.getForgot);
 app.post('/forgot', userController.postForgot);
+
 app.get('/reset/:token', userController.getReset);
 app.post('/reset/:token', userController.postReset);
+
 app.get('/signup', userController.getSignup);
 app.post('/signup', userController.postSignup);
+
 app.get('/contact', contactController.getContact);
 app.post('/contact', contactController.postContact);
+
 app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
 app.post('/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
@@ -110,6 +123,12 @@ app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', '
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), function(req, res) {
   res.redirect(req.session.returnTo || '/');
 });
+
+app.get('/pet/list', petsController.listPets);
+app.post('/pet', petsController.newPet);
+app.get('/pet/:id', petsController.getPet);
+app.put('/pet/:id', petsController.editPet);
+app.delete('/pet/:id', petsController.deletePet);
 
 app.use(errorHandler());
 

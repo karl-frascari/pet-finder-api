@@ -7,20 +7,12 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-/**
- * GET /contact
- * Contact form page.
- */
 exports.getContact = function(req, res) {
   res.render('contact', {
     title: 'Contact'
   });
 };
 
-/**
- * POST /contact
- * Send a contact form via Nodemailer.
- */
 exports.postContact = function(req, res) {
   req.assert('name', 'Name cannot be blank').notEmpty();
   req.assert('email', 'Email is not valid').isEmail();
@@ -37,7 +29,7 @@ exports.postContact = function(req, res) {
   var name = req.body.name;
   var body = req.body.message;
   var to = 'your@email.com';
-  var subject = 'Contact Form | Hackathon Starter';
+  var subject = 'Contact Form';
 
   var mailOptions = {
     to: to,

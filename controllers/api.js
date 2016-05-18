@@ -3,10 +3,6 @@ var async = require('async');
 
 var graph;
 
-/**
- * GET /api
- * List of API examples.
- */
 exports.getApi = function(req, res) {
   res.render('api/index', {
     title: 'API Examples'
@@ -15,6 +11,7 @@ exports.getApi = function(req, res) {
 
 
 exports.getFacebook = function(req, res, next) {
+
   graph = require('fbgraph');
 
   var token = _.find(req.user.tokens, { kind: 'facebook' });
