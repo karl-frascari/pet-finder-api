@@ -95,6 +95,4 @@ describe('User Pets', function() {
       done();
     });
   });
-
-
 });
