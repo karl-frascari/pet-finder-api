@@ -8,7 +8,7 @@ var petSchema = new mongoose.Schema({
   },
   name: {type: String, required: true},
   type: {type: String, required: true},
-  age: Number,
+  age: String,
   dewormed: Boolean,
   castrated: Boolean,
   gender: String,
@@ -16,8 +16,8 @@ var petSchema = new mongoose.Schema({
     lat: {type: String, required: true},
     long: {type: String, required: true},
   },
-  createdAt: {type: Date, required: true},
-  updatedAt: { type: Date, default: Date.now, required: true },
+  createdAt: {type: String, required: true},
+  updatedAt: { type: String, default: Date.now, required: true },
   images: [{
     data: Buffer, 
     contentType: String 
