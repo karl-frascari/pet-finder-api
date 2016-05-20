@@ -20,9 +20,7 @@ var userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-/**
- * Password hash middleware.
- */
+
  userSchema.pre('save', function(next) {
   var user = this;
   if (!user.isModified('password')) {

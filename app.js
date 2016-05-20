@@ -50,7 +50,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-console.log(process.env.SESSION_SECRET);
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -89,6 +88,14 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
+app.all('*',function(req,res,next){
+    if(userController.isAuthenticated){
+        next();
+    }else{
+        next(new Error(401)); // 401 Not Authorized
+    }
+});
+
 app.get('/', homeController.index);
 
 app.get('/login', userController.getLogin);
@@ -108,14 +115,14 @@ app.post('/signup', userController.postSignup);
 app.get('/contact', contactController.getContact);
 app.post('/contact', contactController.postContact);
 
-app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
-app.post('/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
-app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
-app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
-app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
+app.get('/account',  userController.getAccount);
+app.post('/account/profile', userController.postUpdateProfile);
+app.post('/account/password', userController.postUpdatePassword);
+app.post('/account/delete',  userController.postDeleteAccount);
+app.get('/account/unlink/:provider', userController.getOauthUnlink);
 
 app.get('/api', apiController.getApi);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+app.get('/api/facebook',  passportConfig.isAuthorized, apiController.getFacebook);
 app.get('/api/upload', apiController.getFileUpload);
 app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 
@@ -126,7 +133,7 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
 
 app.get('/pet/list', petsController.listPets);
 app.post('/pet', petsController.newPet);
-app.get('/pet/:id', petsController.getPet);
+app.get('/pet/:id',  petsController.getPet);
 app.put('/pet/:id', petsController.editPet);
 app.delete('/pet/:id', petsController.deletePet);
 

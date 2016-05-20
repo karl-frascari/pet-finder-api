@@ -3,7 +3,6 @@ var passport = require('passport');
 var request = require('request');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
-var OpenIDStrategy = require('passport-openid').Strategy;
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 
 var User = require('../models/User');
@@ -17,7 +16,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
 
 passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
   User.findOne({ email: email.toLowerCase() }, function(err, user) {
@@ -33,7 +31,6 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, passw
     });
   });
 }));
-
 
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_ID,
@@ -89,11 +86,14 @@ passport.use(new FacebookStrategy({
 }));
 
 exports.isAuthenticated = function(req, res, next) {
-
+  console.log(req);
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+
+  res.status(401).send({ error: "Unauthorized"});
+
+  // res.redirect('/login');
 };
 
 exports.isAuthorized = function(req, res, next) {

@@ -8,7 +8,6 @@ exports.listPets =  function(req, res) {
             res.status(500).send({ error: 'Error gettting pets!' });
             return;
         }
-
         res.send(pets);
     });
 };
@@ -43,6 +42,9 @@ exports.newPet = function(req, res) {
         name: req.body.name,
         type: req.body.type,
         age: req.body.age,
+        desctription: req.body.desctription,
+        breed: req.body.breed,
+        vaccinated: req.body.vaccinated,
         dewormed: req.body.dewormed,
         castrated: req.body.castrated,
         gender: req.body.gender,
@@ -76,14 +78,11 @@ exports.editPet = function(req, res) {
 
         _(req.body).forEach((value,key) => {
             if(typeof value === "object"){
-                console.log(key)
                 _(value).forEach((v,k) => {
                     newPet[key][k] = v;
                 });
 
             }else{
-                console.log(key)
-
                 newPet[key] = value;
             }
         });
@@ -97,7 +96,6 @@ exports.editPet = function(req, res) {
         });
     });
 };
-
 
 exports.deletePet = function (req, res) {
 
