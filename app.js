@@ -23,6 +23,9 @@ var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var petsController = require('./controllers/pets');
 
+var publicRoutes = ['/login','/','/signup'];
+
+
 dotenv.load({ path: 'var.env' });
 
 var passportConfig = require('./config/passport');
@@ -64,14 +67,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-app.use(function(req, res, next) {
-  if (req.path === '/api/upload') {
-    next();
-  } else {
-    //lusca.csrf()(req, res, next); TODO
-    next();
-  }
-});
+// app.use(function(req, res, next) {
+//   if (req.path === '/api/upload') {
+//     next();
+//   } else {
+//     //lusca.csrf()(req, res, next); TODO
+//     next();
+//   }
+// });
 
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(false));
@@ -88,11 +91,12 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
-app.all('*',function(req,res,next){
-    if(userController.isAuthenticated){
+app.use(function(req,res,next){
+  console.log(req.path)
+    if(publicRoutes.indexOf(req.path) > 0 || userController.isAuthenticated(req, res, next)){
         next();
     }else{
-        next(new Error(401)); // 401 Not Authorized
+      res.send(401);
     }
 });
 
