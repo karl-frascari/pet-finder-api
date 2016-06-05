@@ -4,42 +4,35 @@ var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var passport = require('passport');
 var User = require('../models/User');
+var $q = require('q');
+
 
 exports.isAuthenticated = function(req, res, next) {  
 
-  function localTokenAuthorization() {
+    var deferred = $q.defer();
+
+    (function localTokenAuthorization() {
 
         if (!req.headers.email || !req.headers.token) {
-            return false;
+            
+            deferred.resolve(false);
+        
         } else {
 
             User.findOne({
+
                 email: req.headers.email.toLowerCase()
+
             }, function(err, user) {
 
-              return "true";
+                deferred.resolve(typeof user !== 'undefined' && req.headers.token === user.tokens[0].accessToken);
 
-                if (!user || req.headers.token !== user.tokens[0].accessToken) {
-                    return false;
-                }
-
-                
-                return "true";
             });
         }
-    }
 
-    console.log(localTokenAuthorization())
+    })();
 
-    // if (req.isAuthenticated && req.isAuthenticated()) {
-    //     return next();
-    // } else if (localTokenAuthorization()) {
-    //     return next();
-    // } else {
-    //     return false;
-    // }
-
-    
+    return deferred.promise;    
 };
 
 exports.getLogin = function(req, res) {

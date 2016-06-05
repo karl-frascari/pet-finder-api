@@ -22,9 +22,9 @@ var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var petsController = require('./controllers/pets');
+var constants = require('./config/constants');
 
-var publicRoutes = ['/login','/','/signup'];
-
+var publicRoutes = constants.publicRoutes;
 
 dotenv.load({ path: 'var.env' });
 
@@ -89,14 +89,22 @@ app.use(function(req, res, next) {
   }
   next();
 });
+
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 app.use(function(req,res,next){
   console.log(req.path)
-    if(publicRoutes.indexOf(req.path) > 0 || userController.isAuthenticated(req, res, next)){
+    if(publicRoutes.indexOf(req.path) > 0 ){
         next();
     }else{
-      res.send(401);
+      
+      userController.isAuthenticated(req, res, next).then(function(allowed){
+        if(allowed){
+          next();           
+        }else{          
+          res.send(401);
+        }
+      });     
     }
 });
 
