@@ -1,26 +1,3 @@
-Insert pet in DB
-
-{
-    owner: 
-    {
-        id: "7894",
-        name: "Jose",
-        email: "jose@gmail.com"
-    },
-    name: "Miau",
-    type: "Gato",
-    age: 11,
-    dewormed: true,
-    castrated: false,
-    gender: "Male",
-    location:{
-        lat: "-23.3916595",
-        long: "-46.3503655 "
-    },
-    createdAt: ISODate("2014-01-16T00:00:00Z")
-}
-
-
 //postman
 //http://127.0.0.1:3000/newPet
 
@@ -38,9 +15,12 @@ Insert pet in DB
     "dewormed": true,
     "castrated": false,
     "gender": "Male",
-    "location":{
-        "lat": "-23.3916595",
-        "long": "-46.3503655 "
-    },
+    "coordinates": [-23.3916595, -46.3503655],
+    "images":["Base64"],
     "createdAt": "2014-01-16T00:00:00Z"
+}   "createdAt": "2014-01-16T00:00:00Z"
 }
+
+
+//Get By location
+http://127.0.0.1:3000/pet/listByLocation?latLng=[-24.3916895,-46.3503655]&radius=100

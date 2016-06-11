@@ -15,17 +15,16 @@ var petSchema = new mongoose.Schema({
     name: {type: String, required: true},
     email: {type: String, required: true},
   },
-  location:{
-    lat: {type: String, required: true},
-    long: {type: String, required: true},
-  },
   createdAt: {type: String, required: true},
   updatedAt: { type: String, default: Date.now, required: true },
-  images: [{
-    data: Buffer, 
-    contentType: String 
-  }]
+  images: [],
+  geometry: { 
+    type: { type: String, default:'Point' }, 
+    coordinates: [Number] 
+  },
 }, { timestamps: true });
+
+petSchema.index({geometry: '2dsphere'});
 
 var Pet = mongoose.model('Pet', petSchema);
 

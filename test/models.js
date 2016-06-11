@@ -54,24 +54,22 @@ describe('User Pets', function() {
     it('should create a new pet', function(done) {
 
         var pet = new Pet({
-            "owner": {
-                "id": "5084984984984",
+            "owner": 
+            {
+                "id": "7894",
                 "name": "Jose",
                 "email": "jose@gmail.com"
             },
             "name": "Xoblau",
             "type": "gato",
             "age": 11,
-            "vaccinated": "true",
-            "breed": "Pitbull",
-            "desctription": "Lorem Ipsum",
             "dewormed": true,
             "castrated": false,
             "gender": "Male",
-            "location": {
-                "lat": "-23.3916595",
-                "long": "-46.3503655 "
+            "geometry": { 
+                "coordinates": [-23.3916595, -46.3503655]
             },
+            "images":["Base64"],
             "createdAt": "2014-01-16T00:00:00Z"
         });
 
@@ -88,6 +86,27 @@ describe('User Pets', function() {
             Pet.findById(idPet.toString(), function(err, pet) {
                 if (err) return done(err);
                 pet._id.toString().should.equal(idPet.toString());
+                done();
+            });
+        });
+    });
+
+    it('should find a pet by location', function(done) {
+
+        Pet.find(function(err, pets) {
+
+            var query = {
+                geometry: { 
+                    $geoWithin: { 
+                        $centerSphere:[[-23.3916595, -46.3503655], 10/6371 ]  
+                    } 
+                }
+            };
+
+            Pet.find( query, (err, pets) => {
+
+                if (err || pets.lentgh == 0) return done(err);
+                
                 done();
             });
         });

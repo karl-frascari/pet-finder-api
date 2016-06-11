@@ -12,6 +12,40 @@ exports.listPets =  function(req, res) {
     });
 };
 
+exports.listByLocation = (req, res) => {
+
+    //-23.3916595, -46.3503655
+
+    Pets.find(function(err, pets) {
+
+        if (err || !req.query.latLng) {
+            res.status(500).send({ error: 'Error gettting pet!' });
+            return;
+        }
+
+        var query = {
+            geometry: { 
+                $geoWithin: { 
+                    $centerSphere: [JSON.parse(req.query.latLng), (req.query.radius||10)/6371 ]  
+                } 
+            }
+        };
+
+        Pets.find( query, (err, pets) => {
+
+            if (err) {
+                res.status(500).send({ error: 'Error gettting pet!' });
+                return;
+            }
+            
+            res.send(pets);
+
+        });
+
+    });
+
+};
+
 exports.getPet =  function(req, res) {
     Pets.find(function(err, pets) {
 
@@ -48,16 +82,16 @@ exports.newPet = function(req, res) {
         dewormed: req.body.dewormed,
         castrated: req.body.castrated,
         gender: req.body.gender,
-        location:{
-            lat: req.body.location.lat,
-            long: req.body.location.long,
+        images: req.body.images,
+        geometry: { 
+            coordinates: req.body.coordinates
         },
         createdAt: req.body.createdAt //"2014-01-16T00:00:00Z"
     });
 
     pet.save(function(err){
         if(!err){
-            res.status(200).send();
+            res.status(200).send("New pet created with success");
         }else{
             res.status(500).send({ error: err.message });
         }

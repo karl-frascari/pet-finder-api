@@ -1,3 +1,3 @@
 module.exports = Object.freeze({
-    publicRoutes: ['/login','/','/signup']
+    publicRoutes: ['/','/login','/signup']
 });
